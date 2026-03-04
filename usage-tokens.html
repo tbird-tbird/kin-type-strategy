@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Token Analytics — Usage Type Token Audit</title>
+<style>
+  :root { --bg: #fff; --border: #e5e5e5; --text: #1a1a1a; --muted: #6b7280; --accent: #2563eb; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
+  nav.top-nav { border-bottom: 1px solid var(--border); margin-bottom: 40px; padding: 14px 0; display: flex; gap: 24px; font-size: 13px; position: relative; }
+  nav.top-nav a { color: var(--muted); text-decoration: none; font-weight: 500; }
+  nav.top-nav a:hover { color: var(--text); }
+  nav.top-nav a.current { color: var(--text); }
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-toggle { color: var(--muted); font-weight: 500; font-size: 13px; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 4px; background: none; border: none; font-family: inherit; padding: 0; }
+  .nav-dropdown-toggle:hover { color: var(--text); }
+  .nav-dropdown-toggle.current { color: var(--text); }
+  .nav-dropdown-toggle .caret { font-size: 10px; transition: transform 0.15s ease; }
+  .nav-dropdown.open .caret { transform: rotate(180deg); }
+  .nav-dropdown-menu { display: none; position: absolute; top: calc(100% + 8px); left: 0; background: #fff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 160px; padding: 6px 0; z-index: 100; }
+  .nav-dropdown.open .nav-dropdown-menu { display: block; }
+  .nav-dropdown-menu a { display: block; padding: 8px 16px; color: var(--text); font-size: 14px; font-weight: 400; }
+  .nav-dropdown-menu a:hover { background: #f9fafb; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  h2 { font-size: 20px; font-weight: 600; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 12px; }
+  p { margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px; }
+  th { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 13px; color: var(--text); }
+  td { padding: 10px 14px; border-bottom: 1px solid #f3f4f6; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfc; }
+  code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+  .note { padding: 12px 16px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0; font-size: 13px; margin: 16px 0; }
+  ul, ol { margin: 0 0 16px 24px; }
+  li { margin-bottom: 6px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat-card .value { font-size: 28px; font-weight: 700; color: var(--accent); }
+  .stat-card .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-card.warn .value { color: #d97706; }
+  .stat-card.danger .value { color: #dc2626; }
+  .impact-critical { color: #dc2626; font-weight: 600; }
+  .impact-high { color: #dc2626; }
+  .impact-medium { color: #d97706; }
+  .impact-low { color: #16a34a; }
+  .impact-none { color: #9ca3af; }
+  .bar { height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; margin-top: 4px; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-fill.red { background: #ef4444; }
+  .bar-fill.orange { background: #f59e0b; }
+  .bar-fill.green { background: #22c55e; }
+  .bar-fill.gray { background: #9ca3af; }
+  .tier-1 { background: #fef2f2; border-left: 3px solid #ef4444; padding: 16px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+  .tier-2 { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 16px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+  .mode-tag { display: inline-block; font-size: 11px; background: #f3f4f6; color: var(--muted); padding: 1px 6px; border-radius: 3px; margin: 1px 2px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav class="top-nav">
+  <div class="nav-dropdown" id="typeAnalyticsDropdown">
+    <button class="nav-dropdown-toggle current" onclick="document.getElementById('typeAnalyticsDropdown').classList.toggle('open')">Type Analytics <span class="caret">&#9662;</span></button>
+    <div class="nav-dropdown-menu">
+      <a href="index.html">Base Tokens</a>
+      <a href="usage-tokens.html">Usage Tokens</a>
+    </div>
+  </div>
+  <a href="token-proposal.html">Token Proposal</a>
+  <a href="type-scale.html">Type Scale</a>
+  <a href="type-styles.html">Type Styles</a>
+</nav>
+
+<h1>Usage Type Token Analytics</h1>
+<p class="subtitle">Source: Prism Foundations (<code>4dTVxONyPrT1oiEyUkYhIy</code>), "Theme" collection &middot; Analysis of which usage type tokens are consumed by comp tokens across all 32 theme modes</p>
+
+<!-- ===================== SECTION 1: SUMMARY ===================== -->
+
+<h2>Summary</h2>
+<div class="stat-grid">
+  <div class="stat-card"><div class="value">24</div><div class="label">Usage Semantic Primitives</div></div>
+  <div class="stat-card"><div class="value">154</div><div class="label">Usage/Type Composites</div></div>
+  <div class="stat-card"><div class="value">182</div><div class="label">Comp Tokens Analyzed</div></div>
+  <div class="stat-card"><div class="value">0</div><div class="label">Unreferenced Primitives</div></div>
+  <div class="stat-card danger"><div class="value">114</div><div class="label">Unreferenced Composites</div></div>
+</div>
+
+<div class="note"><strong>Methodology:</strong> This analysis traces alias chains from all 182 <code>comp/type/*</code> tokens back to usage-level tokens across <strong>all 32 theme modes</strong>. Usage tokens exist at two levels: <strong>24 semantic primitives</strong> (e.g., <code>usage/font-size/small</code>) and <strong>154 composites</strong> (e.g., <code>usage/type/label/medium/strong/font-size</code>). Comp tokens may reference either level. A usage token is counted as "referenced" if any comp token in any mode aliases to it.</div>
+
+<!-- ===================== SECTION 2: SEMANTIC PRIMITIVES ===================== -->
+
+<h2>Usage semantic primitives (top 10 by consumption)</h2>
+<p>These 24 primitives are the core abstraction layer between base tokens and the rest of the system. <strong>All 24 are actively consumed.</strong></p>
+<table>
+  <tr><th>Usage primitive</th><th style="width:60px">Refs</th><th style="width:60px">Modes</th><th>Key consumers</th></tr>
+  <tr><td><code>usage/font-family/default</code></td><td><strong>679</strong></td><td>33</td><td>17 composites + direct comp refs &mdash; body, label, link styles across all modes</td></tr>
+  <tr><td><code>usage/font-weight/strong</code></td><td><strong>408</strong></td><td>30</td><td>15 composites &mdash; all strong variants across display, body, label, link, title</td></tr>
+  <tr><td><code>usage/font-family/brand</code></td><td><strong>194</strong></td><td>33</td><td>5 composites &mdash; display and title styles exclusively</td></tr>
+  <tr><td><code>usage/letter-spacing/small</code></td><td><strong>183</strong></td><td>16</td><td>13 composites + direct comp refs &mdash; label and link styles</td></tr>
+  <tr><td><code>usage/font-weight/default</code></td><td><strong>163</strong></td><td>25</td><td>7 composites &mdash; all default-weight body and label styles</td></tr>
+  <tr><td><code>usage/font-size/x-small</code></td><td>130</td><td>20</td><td>5 composites + direct comp refs &mdash; x-small label, body, link</td></tr>
+  <tr><td><code>usage/line-height/x-small</code></td><td>124</td><td>20</td><td>5 composites + direct comp refs &mdash; matching x-small tokens</td></tr>
+  <tr><td><code>usage/line-height/small</code></td><td>109</td><td>20</td><td>6 composites + direct comp refs &mdash; small body, label, link</td></tr>
+  <tr><td><code>usage/font-size/small</code></td><td>103</td><td>20</td><td>5 composites + direct comp refs &mdash; small body, label, link</td></tr>
+  <tr><td><code>usage/font-size/medium</code></td><td>99</td><td>20</td><td>5 composites + direct comp refs &mdash; medium body, label, link</td></tr>
+</table>
+
+<div class="note"><strong>Key finding:</strong> <code>usage/font-family/default</code> is the single most consumed usage token with 679 downstream references. It is used by every non-display, non-title text style across all modes. The <code>brand</code> font-family variant is reserved exclusively for display and title styles.</div>
+
+<!-- ===================== SECTION 3: HIGH-USAGE COMPOSITES ===================== -->
+
+<h2>High-usage composites (top 10)</h2>
+<p>These are the most-referenced <code>usage/type/*</code> composite tokens. <strong>Label styles dominate comp-level consumption.</strong></p>
+<table>
+  <tr><th>Composite token</th><th style="width:50px">Refs</th><th style="width:50px">Modes</th><th>Comp consumers</th></tr>
+  <tr><td><code>usage/type/label/medium/strong/letter-spacing</code></td><td><strong>138</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag (8 components)</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/font-size</code></td><td><strong>132</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/font-weight</code></td><td><strong>132</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/line-height</code></td><td><strong>132</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/font-family</code></td><td><strong>131</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/large/strong/font-size</code></td><td><strong>126</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/large/strong/letter-spacing</code></td><td><strong>126</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/large/strong/line-height</code></td><td><strong>126</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/large/strong/font-family</code></td><td><strong>125</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/medium/default/font-family</code></td><td><strong>124</strong></td><td>33</td><td>button-tab, button-toggle-group, button, field, table, tag (9 components)</td></tr>
+</table>
+
+<!-- ===================== SECTION 4: UNREFERENCED COMPOSITES ===================== -->
+
+<h2>Never-referenced composites</h2>
+<p><strong>114 of 154 composites (74%) are never consumed</strong> by any comp token across any mode. This breaks down by style category:</p>
+
+<table>
+  <tr><th>Style category</th><th>Total</th><th>Referenced</th><th>Unreferenced</th><th>% unused</th><th></th></tr>
+  <tr><td><strong>body</strong></td><td>42</td><td>0</td><td><strong>42</strong></td><td class="impact-critical">100%</td><td><div class="bar" style="width:100px"><div class="bar-fill red" style="width:100%"></div></div></td></tr>
+  <tr><td><strong>display</strong></td><td>21</td><td>0</td><td><strong>21</strong></td><td class="impact-critical">100%</td><td><div class="bar" style="width:100px"><div class="bar-fill red" style="width:100%"></div></div></td></tr>
+  <tr><td><strong>link</strong></td><td>21</td><td>0</td><td><strong>21</strong></td><td class="impact-critical">100%</td><td><div class="bar" style="width:100px"><div class="bar-fill red" style="width:100%"></div></div></td></tr>
+  <tr><td><strong>title</strong></td><td>14</td><td>5</td><td>9</td><td class="impact-medium">64%</td><td><div class="bar" style="width:100px"><div class="bar-fill orange" style="width:64%"></div></div></td></tr>
+  <tr><td><strong>label</strong></td><td>56</td><td>35</td><td>21</td><td class="impact-medium">38%</td><td><div class="bar" style="width:100px"><div class="bar-fill orange" style="width:38%"></div></div></td></tr>
+</table>
+
+<div class="note"><strong>Why are body, display, and link composites 100% unused?</strong> No <code>comp/type/*</code> tokens exist for body, display, or link styles. Comp tokens for these categories either reference usage semantic primitives directly (bypassing the composite layer) or do not exist at all. Only <strong>label</strong> and <strong>title</strong> style categories have corresponding comp tokens.</div>
+
+<h3>Label &mdash; 21 unreferenced of 56</h3>
+<p>All <code>text-case</code> and <code>text-decoration</code> properties across label sizes are unreferenced (16 tokens). Additionally, all 5 core properties of <code>label/x-small/default</code> are unreferenced.</p>
+<table>
+  <tr><th>Unreferenced group</th><th>Tokens</th><th>Detail</th></tr>
+  <tr><td><code>text-case</code> properties</td><td>8</td><td>All sizes (x-small, small, medium, large) &times; both variants (default, strong)</td></tr>
+  <tr><td><code>text-decoration</code> properties</td><td>8</td><td>All sizes (x-small, small, medium, large) &times; both variants (default, strong)</td></tr>
+  <tr><td><code>label/x-small/default/*</code></td><td>5</td><td>font-family, font-size, font-weight, letter-spacing, line-height &mdash; the default variant at x-small is unused</td></tr>
+</table>
+
+<h3>Title &mdash; 9 unreferenced of 14</h3>
+<p>Only <code>title/large</code> core properties (font-family, font-size, font-weight, letter-spacing, line-height) are consumed &mdash; by <code>comp/type/empty-state/title/*</code>. The <code>title/medium</code> style and both text-case/text-decoration properties are unreferenced.</p>
+<table>
+  <tr><th>Unreferenced group</th><th>Tokens</th><th>Detail</th></tr>
+  <tr><td><code>title/medium/*</code></td><td>5</td><td>font-family, font-size, font-weight, letter-spacing, line-height</td></tr>
+  <tr><td><code>title/large/text-case</code></td><td>1</td><td>text-case property</td></tr>
+  <tr><td><code>title/large/text-decoration</code></td><td>1</td><td>text-decoration property</td></tr>
+  <tr><td><code>title/medium/text-case</code></td><td>1</td><td>text-case property</td></tr>
+  <tr><td><code>title/medium/text-decoration</code></td><td>1</td><td>text-decoration property</td></tr>
+</table>
+
+<!-- ===================== SECTION 5: COMP TOKEN ALIASING PATTERNS ===================== -->
+
+<h2>Comp token aliasing patterns</h2>
+<p>Comp tokens reference usage tokens at two different levels, creating an inconsistent aliasing pattern across the system.</p>
+
+<table>
+  <tr><th>Pattern</th><th>Comp tokens</th><th>Target layer</th><th>Style categories</th></tr>
+  <tr><td><strong>Via composites</strong></td><td>Majority of label, title comps</td><td><code>usage/type/*</code> composites</td><td>label (large, medium, small, x-small/strong), title (large only)</td></tr>
+  <tr><td><strong>Direct to primitives</strong></td><td>avatar, table, tag, some button variants</td><td><code>usage/font-*</code>, <code>usage/line-height/*</code>, <code>usage/letter-spacing/*</code> primitives</td><td>Mixed &mdash; bypasses composite layer</td></tr>
+</table>
+
+<div class="note"><strong>Inconsistency:</strong> Some comp tokens alias to <code>usage/type/label/medium/strong/font-size</code> (the composite), while others alias directly to <code>usage/font-size/x-small</code> (the semantic primitive). Both patterns coexist within the same component &mdash; for example, <code>comp/type/tag/label/small/font-size</code> references the composite but <code>comp/type/tag/label/large/letter-spacing</code> references the primitive.</div>
+
+<!-- ===================== SECTION 6: MODE-LIMITED PRIMITIVES ===================== -->
+
+<h2>Mode-limited semantic primitives</h2>
+<p>While all 24 usage semantic primitives are consumed, some are active in significantly fewer modes than others.</p>
+<table>
+  <tr><th>Usage primitive</th><th>Refs</th><th>Active modes</th><th>Notable limitation</th></tr>
+  <tr><td><code>usage/font-weight/xstrong</code></td><td>10</td><td>2</td><td>Only <span class="mode-tag">Consumer</span> <span class="mode-tag">Consumer Dark</span> &mdash; used by display and title styles in these modes only</td></tr>
+  <tr><td><code>usage/letter-spacing/large</code></td><td>53</td><td>12</td><td>Absent from 20 modes including several core brand modes</td></tr>
+  <tr><td><code>usage/letter-spacing/medium</code></td><td>93</td><td>14</td><td>Absent from 18 modes</td></tr>
+  <tr><td><code>usage/letter-spacing/small</code></td><td>183</td><td>16</td><td>Absent from 16 modes despite being the most-used letter-spacing token</td></tr>
+  <tr><td><code>usage/font-size/xx-large</code></td><td>18</td><td>18</td><td>Not consumed by 14 modes</td></tr>
+  <tr><td><code>usage/font-size/x-large</code></td><td>19</td><td>18</td><td>Not consumed by 14 modes</td></tr>
+  <tr><td><code>usage/font-size/large</code></td><td>20</td><td>18</td><td>Not consumed by 14 modes</td></tr>
+  <tr><td><code>usage/line-height/large</code></td><td>19</td><td>18</td><td>Not consumed by 14 modes</td></tr>
+</table>
+
+<div class="note"><strong>Key observation:</strong> <code>usage/font-weight/xstrong</code> exists solely for Consumer and Consumer Dark modes. All letter-spacing primitives are absent from at least half the modes, indicating many modes collapse letter-spacing differentiation (all sizes share the same base value).</div>
+
+<!-- ===================== SECTION 7: IMPACT ASSESSMENT ===================== -->
+
+<h2>Impact assessment by property</h2>
+
+<h3>Usage semantic primitives</h3>
+<table>
+  <tr><th>Property</th><th>Tokens</th><th>Referenced</th><th>% used</th><th>Total refs</th><th>Impact of change</th></tr>
+  <tr><td><strong>font-family</strong></td><td>2</td><td>2</td><td>100%</td><td>873</td><td class="impact-critical">Critical &mdash; highest total refs; affects every text element</td></tr>
+  <tr><td><strong>font-weight</strong></td><td>3</td><td>3</td><td>100%</td><td>581</td><td class="impact-critical">Critical &mdash; defines all weight variants</td></tr>
+  <tr><td><strong>font-size</strong></td><td>8</td><td>8</td><td>100%</td><td>492</td><td class="impact-high">High &mdash; defines all size steps</td></tr>
+  <tr><td><strong>line-height</strong></td><td>8</td><td>8</td><td>100%</td><td>486</td><td class="impact-high">High &mdash; defines all line-height steps</td></tr>
+  <tr><td><strong>letter-spacing</strong></td><td>3</td><td>3</td><td>100%</td><td>329</td><td class="impact-medium">Medium &mdash; limited mode coverage</td></tr>
+</table>
+
+<h3>Usage/type composites</h3>
+<table>
+  <tr><th>Style category</th><th>Tokens</th><th>Referenced</th><th>% used</th><th>Total refs</th><th>Impact of change</th></tr>
+  <tr><td><strong>label</strong></td><td>56</td><td>35</td><td>63%</td><td>3,201</td><td class="impact-critical">Critical &mdash; drives button, field, tag, banner, avatar comp styling</td></tr>
+  <tr><td><strong>title</strong></td><td>14</td><td>5</td><td>36%</td><td>162</td><td class="impact-medium">Medium &mdash; only consumed by empty-state component</td></tr>
+  <tr><td><strong>body</strong></td><td>42</td><td>0</td><td>0%</td><td>0</td><td class="impact-none">None &mdash; no comp tokens alias to body composites</td></tr>
+  <tr><td><strong>display</strong></td><td>21</td><td>0</td><td>0%</td><td>0</td><td class="impact-none">None &mdash; no comp tokens alias to display composites</td></tr>
+  <tr><td><strong>link</strong></td><td>21</td><td>0</td><td>0%</td><td>0</td><td class="impact-none">None &mdash; no comp tokens alias to link composites</td></tr>
+</table>
+
+<!-- ===================== SECTION 8: FULL REFERENCE TABLES ===================== -->
+
+<h2>Full reference table &mdash; semantic primitives</h2>
+
+<h3>Font Family (2 tokens &mdash; 0 unreferenced)</h3>
+<table>
+  <tr><th>Usage token</th><th>Total refs</th><th>Modes</th><th>Composite consumers</th><th>Direct comp consumers</th></tr>
+  <tr><td><code>usage/font-family/default</code></td><td><strong>679</strong></td><td>33</td><td>17 composites (all body, label, link styles)</td><td>Multiple comp tokens reference this directly</td></tr>
+  <tr><td><code>usage/font-family/brand</code></td><td><strong>194</strong></td><td>33</td><td>5 composites (display &amp; title styles only)</td><td>&mdash;</td></tr>
+</table>
+
+<h3>Font Weight (3 tokens &mdash; 0 unreferenced)</h3>
+<table>
+  <tr><th>Usage token</th><th>Total refs</th><th>Modes</th><th>Composite consumers</th><th>Note</th></tr>
+  <tr><td><code>usage/font-weight/strong</code></td><td><strong>408</strong></td><td>30</td><td>15 composites &mdash; all strong variants</td><td></td></tr>
+  <tr><td><code>usage/font-weight/default</code></td><td><strong>163</strong></td><td>25</td><td>7 composites &mdash; all default-weight styles</td><td></td></tr>
+  <tr><td><code>usage/font-weight/xstrong</code></td><td>10</td><td>2</td><td>5 composites &mdash; display &amp; title styles</td><td>Only <span class="mode-tag">Consumer</span> <span class="mode-tag">Consumer Dark</span></td></tr>
+</table>
+
+<h3>Font Size (8 tokens &mdash; 0 unreferenced)</h3>
+<table>
+  <tr><th>Usage token</th><th>Total refs</th><th>Modes</th><th>Key consumers</th></tr>
+  <tr><td><code>usage/font-size/x-small</code></td><td><strong>130</strong></td><td>20</td><td>label/x-small, body/small, link/small composites + direct comp refs</td></tr>
+  <tr><td><code>usage/font-size/small</code></td><td>103</td><td>20</td><td>label/small, body/medium, link/medium composites + direct comp refs</td></tr>
+  <tr><td><code>usage/font-size/medium</code></td><td>99</td><td>20</td><td>label/medium, body/large, link/large composites + direct comp refs</td></tr>
+  <tr><td><code>usage/font-size/xx-small</code></td><td>70</td><td>20</td><td>label/x-small/strong composites + direct comp refs (tag, table)</td></tr>
+  <tr><td><code>usage/font-size/xxx-large</code></td><td>33</td><td>18</td><td>display/x-large composites</td></tr>
+  <tr><td><code>usage/font-size/large</code></td><td>20</td><td>18</td><td>title/medium composites + direct comp refs</td></tr>
+  <tr><td><code>usage/font-size/x-large</code></td><td>19</td><td>18</td><td>display/medium, title/large composites</td></tr>
+  <tr><td><code>usage/font-size/xx-large</code></td><td>18</td><td>18</td><td>display/large composites</td></tr>
+</table>
+
+<h3>Line Height (8 tokens &mdash; 0 unreferenced)</h3>
+<table>
+  <tr><th>Usage token</th><th>Total refs</th><th>Modes</th><th>Key consumers</th></tr>
+  <tr><td><code>usage/line-height/x-small</code></td><td><strong>124</strong></td><td>20</td><td>label/x-small, body/small, link/small composites + direct comp refs</td></tr>
+  <tr><td><code>usage/line-height/small</code></td><td>109</td><td>20</td><td>label/small, body/medium, link/medium composites + direct comp refs</td></tr>
+  <tr><td><code>usage/line-height/medium</code></td><td>99</td><td>20</td><td>label/medium, body/large, link/large composites + direct comp refs</td></tr>
+  <tr><td><code>usage/line-height/xx-small</code></td><td>64</td><td>20</td><td>label/x-small/strong composites + direct comp refs</td></tr>
+  <tr><td><code>usage/line-height/xxx-large</code></td><td>33</td><td>18</td><td>display/x-large composites</td></tr>
+  <tr><td><code>usage/line-height/x-large</code></td><td>20</td><td>18</td><td>display/medium, title/large composites</td></tr>
+  <tr><td><code>usage/line-height/large</code></td><td>19</td><td>18</td><td>title/medium composites + direct comp refs</td></tr>
+  <tr><td><code>usage/line-height/xx-large</code></td><td>18</td><td>18</td><td>display/large composites</td></tr>
+</table>
+
+<h3>Letter Spacing (3 tokens &mdash; 0 unreferenced)</h3>
+<table>
+  <tr><th>Usage token</th><th>Total refs</th><th>Modes</th><th>Key consumers</th></tr>
+  <tr><td><code>usage/letter-spacing/small</code></td><td><strong>183</strong></td><td>16</td><td>13 composites (label/x-small, body/small, link/small) + direct comp refs</td></tr>
+  <tr><td><code>usage/letter-spacing/medium</code></td><td>93</td><td>14</td><td>All medium-sized composites + direct comp refs</td></tr>
+  <tr><td><code>usage/letter-spacing/large</code></td><td>53</td><td>12</td><td>Display and title composites + large body/link styles</td></tr>
+</table>
+
+<!-- ===================== SECTION 9: COMPOSITE CONSUMPTION DETAIL ===================== -->
+
+<h2>Full reference table &mdash; composites by style</h2>
+
+<h3>Label composites (35 of 56 referenced)</h3>
+<table>
+  <tr><th>Composite token</th><th>Refs</th><th>Modes</th><th>Comp consumers</th></tr>
+  <tr><td><code>usage/type/label/medium/strong/letter-spacing</code></td><td><strong>138</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag (8)</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/font-size</code></td><td><strong>132</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/font-weight</code></td><td><strong>132</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/line-height</code></td><td><strong>132</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/strong/font-family</code></td><td><strong>131</strong></td><td>33</td><td>banner, button-tab, button-toggle-group, button, field, tag</td></tr>
+  <tr><td><code>usage/type/label/large/strong/font-size</code></td><td><strong>126</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/large/strong/letter-spacing</code></td><td><strong>126</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/large/strong/line-height</code></td><td><strong>126</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/large/strong/font-family</code></td><td><strong>125</strong></td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/medium/default/font-family</code></td><td><strong>124</strong></td><td>33</td><td>button-tab, button-toggle-group, button, field, table, tag (9)</td></tr>
+  <tr><td><code>usage/type/label/medium/default/font-weight</code></td><td><strong>124</strong></td><td>33</td><td>button-tab, button-toggle-group, button, field, table, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/default/font-size</code></td><td>123</td><td>33</td><td>button-tab, button-toggle-group, button, field, table, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/default/line-height</code></td><td>123</td><td>33</td><td>button-tab, button-toggle-group, button, field, table, tag</td></tr>
+  <tr><td><code>usage/type/label/medium/default/letter-spacing</code></td><td>117</td><td>33</td><td>button-tab, button-toggle-group, button, field, table, tag</td></tr>
+  <tr><td><code>usage/type/label/large/strong/font-weight</code></td><td>108</td><td>33</td><td>avatar, banner, button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/strong/font-family</code></td><td>108</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/strong/font-size</code></td><td>104</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/strong/font-weight</code></td><td>104</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/strong/letter-spacing</code></td><td>104</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/strong/line-height</code></td><td>104</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/default/font-family</code></td><td>85</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/default/font-weight</code></td><td>85</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/default/font-size</code></td><td>84</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/default/letter-spacing</code></td><td>84</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/small/default/line-height</code></td><td>84</td><td>33</td><td>button-tab, button-toggle-group, button, field</td></tr>
+  <tr><td><code>usage/type/label/large/default/font-family</code></td><td>46</td><td>33</td><td>button-tab, button-toggle-group, field</td></tr>
+  <tr><td><code>usage/type/label/large/default/font-size</code></td><td>46</td><td>33</td><td>button-tab, button-toggle-group, field</td></tr>
+  <tr><td><code>usage/type/label/large/default/font-weight</code></td><td>46</td><td>33</td><td>button-tab, button-toggle-group, field</td></tr>
+  <tr><td><code>usage/type/label/large/default/letter-spacing</code></td><td>46</td><td>33</td><td>button-tab, button-toggle-group, field</td></tr>
+  <tr><td><code>usage/type/label/large/default/line-height</code></td><td>46</td><td>33</td><td>button-tab, button-toggle-group, field</td></tr>
+  <tr><td><code>usage/type/label/x-small/strong/letter-spacing</code></td><td>47</td><td>33</td><td>table, tag (4 size variants)</td></tr>
+  <tr><td><code>usage/type/label/x-small/strong/font-size</code></td><td>24</td><td>33</td><td>table, tag</td></tr>
+  <tr><td><code>usage/type/label/x-small/strong/font-weight</code></td><td>24</td><td>33</td><td>table, tag</td></tr>
+  <tr><td><code>usage/type/label/x-small/strong/line-height</code></td><td>24</td><td>33</td><td>table, tag</td></tr>
+  <tr><td><code>usage/type/label/x-small/strong/font-family</code></td><td>19</td><td>33</td><td>table, tag</td></tr>
+</table>
+
+<h3>Title composites (5 of 14 referenced)</h3>
+<table>
+  <tr><th>Composite token</th><th>Refs</th><th>Modes</th><th>Comp consumer</th></tr>
+  <tr><td><code>usage/type/title/large/font-family</code></td><td>33</td><td>33</td><td>empty-state/title</td></tr>
+  <tr><td><code>usage/type/title/large/font-size</code></td><td>33</td><td>33</td><td>empty-state/title</td></tr>
+  <tr><td><code>usage/type/title/large/letter-spacing</code></td><td>33</td><td>33</td><td>empty-state/title</td></tr>
+  <tr><td><code>usage/type/title/large/line-height</code></td><td>33</td><td>33</td><td>empty-state/title</td></tr>
+  <tr><td><code>usage/type/title/large/font-weight</code></td><td>30</td><td>33</td><td>empty-state/title</td></tr>
+</table>
+
+<h3>Body, Display, Link composites (0 of 84 referenced)</h3>
+<p>All 42 body, 21 display, and 21 link composites have zero references from comp tokens.</p>
+
+<!-- ===================== SECTION 10: OBSERVATIONS ===================== -->
+
+<h2>Observations</h2>
+<ul>
+  <li><strong>All 24 usage semantic primitives are actively consumed</strong> across modes. There are no orphaned primitives, making this a well-utilized abstraction layer.</li>
+  <li><strong>74% of usage/type composites are unreferenced</strong> (114 of 154). The entire body (42), display (21), and link (21) categories have zero comp token consumers. These composites exist but serve no downstream aliasing purpose at the comp level.</li>
+  <li><strong>Label composites drive the system</strong> &mdash; label styles account for 3,201 of 3,363 total composite references (95%). They are consumed by button, button-tab, button-toggle-group, field, banner, avatar, table, and tag components.</li>
+  <li><strong>Inconsistent aliasing patterns exist</strong> &mdash; some comp tokens alias through the composite layer (<code>usage/type/*</code>) while others bypass it entirely and alias directly to semantic primitives (<code>usage/font-*</code>). This mixed pattern makes dependency tracing less predictable.</li>
+  <li><strong><code>text-case</code> and <code>text-decoration</code> are universally unreferenced</strong> &mdash; all 20 text-case and text-decoration composite tokens across every style category are never consumed by any comp token.</li>
+  <li><strong><code>usage/font-weight/xstrong</code> is mode-specific</strong> &mdash; it only applies to Consumer and Consumer Dark modes, used by display and title styles. All other modes use <code>strong</code> or <code>default</code> weights instead.</li>
+  <li><strong>Letter-spacing primitives have limited mode coverage</strong> &mdash; even the most-used letter-spacing token (<code>small</code>) is absent from half the modes, suggesting many brand themes collapse letter-spacing differentiation.</li>
+</ul>
+
+</div>
+<script>
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('typeAnalyticsDropdown');
+  if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+});
+</script>
+</body>
+</html>
