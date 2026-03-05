@@ -57,6 +57,7 @@
   .scale-toggle button:last-child { border-right: none; }
   .scale-toggle button:hover { background: #f9fafb; color: var(--text); }
   .scale-toggle button.active, .scale-toggle button.active:hover { background: var(--text); color: #fff; }
+  .scale-toggle.disabled { opacity: 0.35; pointer-events: none; }
 
   .scale-info { display: flex; gap: 24px; margin-bottom: 28px; font-size: 13px; color: var(--muted); }
   .scale-info .count { font-weight: 600; color: var(--text); }
@@ -201,16 +202,23 @@ function renderScale(name) {
   });
 }
 
+function updateDisplayToggleState() {
+  var el = document.getElementById('displayFontToggle');
+  el.classList.toggle('disabled', currentScale === 'foundation');
+}
+
 document.getElementById('scaleToggle').addEventListener('click', function(e) {
   var btn = e.target.closest('button');
   if (!btn) return;
   this.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   currentScale = btn.dataset.scale;
+  updateDisplayToggleState();
   renderScale(currentScale);
 });
 
 renderScale('foundation');
+updateDisplayToggleState();
 
 document.getElementById('fontToggle').addEventListener('click', function(e) {
   var btn = e.target.closest('button');
