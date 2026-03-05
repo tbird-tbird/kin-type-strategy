@@ -131,6 +131,12 @@ var scales = {
 var foundationSet = {};
 scales.foundation.forEach(function(s) { foundationSet[s] = true; });
 
+var fontMap = {
+  sfpro: "'SF Pro', 'SF Pro Display', -apple-system, system-ui, sans-serif",
+  inter: "'Inter', sans-serif"
+};
+var currentFont = 'sfpro';
+
 function renderScale(name) {
   var sizes = scales[name];
   var list = document.getElementById('scaleList');
@@ -161,12 +167,6 @@ document.getElementById('scaleToggle').addEventListener('click', function(e) {
 });
 
 renderScale('foundation');
-
-var fontMap = {
-  sfpro: "'SF Pro', 'SF Pro Display', -apple-system, system-ui, sans-serif",
-  inter: "'Inter', sans-serif"
-};
-var currentFont = 'sfpro';
 
 document.getElementById('fontToggle').addEventListener('click', function(e) {
   var btn = e.target.closest('button');
