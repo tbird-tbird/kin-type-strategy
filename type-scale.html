@@ -116,6 +116,7 @@
     <button class="active" data-scale="foundation">Foundation</button>
     <button data-scale="consumer">Consumer</button>
     <button data-scale="courier">Courier+</button>
+    <button data-scale="merchant">Merchant</button>
   </div>
   <div class="font-toggles">
     <div class="scale-toggle" id="fontToggle">
@@ -143,6 +144,7 @@ var scales = {
   foundation: [72, 60, 48, 40, 32, 28, 24, 20, 18, 16, 14, 12],
   consumer: [40, 32, 24, 20, 16, 14, 12],
   courier: [40, 28, 22, 18, 16],
+  merchant: [],
 };
 
 var sectionBreaks = {
@@ -169,6 +171,14 @@ var currentScale = 'foundation';
 function renderScale(name) {
   var sizes = scales[name];
   var list = document.getElementById('scaleList');
+  var infoEl = document.getElementById('scaleInfo');
+
+  if (!sizes.length) {
+    infoEl.style.display = 'none';
+    list.innerHTML = '<li style="padding:48px 0;text-align:center;color:var(--muted);font-size:14px">Scale to be defined</li>';
+    return;
+  }
+  infoEl.style.display = '';
   document.getElementById('stepCount').textContent = sizes.length;
   document.getElementById('scaleRange').textContent = sizes[sizes.length - 1] + 'px \u2013 ' + sizes[0] + 'px';
 
