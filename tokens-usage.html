@@ -25,9 +25,10 @@
   [data-theme="dark"] .scale-item:hover { background: #161616; }
   [data-theme="dark"] .scale-flag { background: #2a0808; border-color: #7f1d1d; color: #f87171; }
   [data-theme="dark"] .scale-px.flagged { color: #f87171; }
-  .theme-toggle { margin-left: auto; display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 3px; }
-  .theme-toggle button { padding: 6px 16px; font-size: 13px; font-weight: 500; font-family: inherit; border: none; background: transparent; color: var(--muted); cursor: pointer; border-radius: 999px; transition: all 0.2s ease; }
-  .theme-toggle button.active { background: var(--text); color: var(--bg); }
+  .theme-toggle { margin-left: auto; display: flex; align-items: center; }
+  .theme-toggle button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; padding: 0; }
+  .theme-toggle button:hover { color: var(--text); border-color: var(--text); }
+  .theme-toggle svg { width: 18px; height: 18px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
   .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
@@ -89,8 +90,7 @@
   <a href="type-scale.html">Type Scale</a>
   <a href="type-styles.html">Type Styles</a>
   <div class="theme-toggle">
-    <button data-theme="light">Light</button>
-    <button data-theme="dark">Dark</button>
+    <button id="themeBtn" aria-label="Toggle dark mode"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.99 46V37.85c-2.37-.34-4.55-1.27-6.39-2.64l-6.2 6.2a2 2 0 01-2.83-2.83l6.2-6.2a14.01 14.01 0 01-2.64-6.39H2a2 2 0 010-4h8.13c.34-2.37 1.28-4.56 2.65-6.39L6.59 9.4a2 2 0 012.83-2.83l6.2 6.2A14.01 14.01 0 0121.99 10.15V2a2 2 0 014 0v8.14c2.37.34 4.55 1.27 6.38 2.64l6.22-6.21a2 2 0 012.83 2.83l-6.22 6.21a14.01 14.01 0 012.65 6.38H46a2 2 0 010 4h-8.15a14.01 14.01 0 01-2.63 6.38l6.22 6.22a2 2 0 01-2.83 2.83l-6.22-6.21a14.01 14.01 0 01-6.4 2.65V46a2 2 0 01-4 0zM23.99 14a10 10 0 100 20 10 10 0 000-20z" fill="currentColor"/></svg></button>
   </div>
 </nav>
 
@@ -260,17 +260,11 @@ document.addEventListener('click', function(e) {
   }
 });
 
-var _pt = localStorage.getItem('prism-theme') || 'light';
-document.querySelectorAll('.theme-toggle button').forEach(function(b) {
-  b.classList.toggle('active', b.dataset.theme === _pt);
-  b.addEventListener('click', function() {
-    _pt = this.dataset.theme;
-    document.documentElement.setAttribute('data-theme', _pt);
-    localStorage.setItem('prism-theme', _pt);
-    document.querySelectorAll('.theme-toggle button').forEach(function(b2) {
-      b2.classList.toggle('active', b2.dataset.theme === _pt);
-    });
-  });
+document.getElementById('themeBtn').addEventListener('click', function() {
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  var next = current === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('prism-theme', next);
 });
 </script>
 </body>
