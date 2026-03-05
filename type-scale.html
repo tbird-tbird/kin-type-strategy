@@ -79,6 +79,15 @@
   .scale-px.flagged { color: #dc2626; }
   .scale-section { padding: 20px 0 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border-bottom: 1px solid var(--border); }
   .scale-section:first-child { padding-top: 0; }
+  .merchant-slider { display: none; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .merchant-slider.visible { display: flex; }
+  .merchant-slider .slider-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .merchant-slider .slider-value { font-size: 13px; font-weight: 600; color: var(--text); min-width: 16px; text-align: center; }
+  .merchant-slider input[type="range"] { -webkit-appearance: none; appearance: none; flex: 1; height: 4px; background: var(--border); border-radius: 2px; outline: none; cursor: pointer; }
+  .merchant-slider input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--text); border: 2px solid var(--bg); box-shadow: 0 1px 4px rgba(0,0,0,0.2); cursor: pointer; }
+  .merchant-slider input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--text); border: 2px solid var(--bg); box-shadow: 0 1px 4px rgba(0,0,0,0.2); cursor: pointer; }
+  .slider-stops { display: flex; justify-content: space-between; position: relative; margin-top: -2px; }
+  .slider-stops span { font-size: 11px; color: var(--muted); }
 </style>
 <script>(function(){var t=localStorage.getItem("prism-theme")||"light";document.documentElement.setAttribute("data-theme",t)})()</script>
 </head>
@@ -129,6 +138,12 @@
       <button data-dfont="stratos">Stratos</button>
     </div>
   </div>
+</div>
+
+<div class="merchant-slider" id="merchantSlider">
+  <span class="slider-label">Size buckets</span>
+  <input type="range" id="bucketSlider" min="1" max="3" step="1" value="1">
+  <span class="slider-value" id="bucketValue">1</span>
 </div>
 
 <div class="scale-info" id="scaleInfo">
@@ -222,6 +237,7 @@ function renderScale(name) {
 function updateDisplayToggleState() {
   var el = document.getElementById('displayFontToggle');
   el.classList.toggle('disabled', currentScale === 'foundation');
+  document.getElementById('merchantSlider').classList.toggle('visible', currentScale === 'merchant');
 }
 
 document.getElementById('scaleToggle').addEventListener('click', function(e) {
@@ -244,6 +260,10 @@ document.getElementById('fontToggle').addEventListener('click', function(e) {
   btn.classList.add('active');
   currentFont = btn.dataset.font;
   renderScale(currentScale);
+});
+
+document.getElementById('bucketSlider').addEventListener('input', function() {
+  document.getElementById('bucketValue').textContent = this.value;
 });
 
 document.getElementById('displayFontToggle').addEventListener('click', function(e) {
