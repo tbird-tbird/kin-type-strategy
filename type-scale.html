@@ -262,7 +262,10 @@ function renderScale(name) {
 
 function updateDisplayToggleState() {
   var el = document.getElementById('displayFontToggle');
-  el.classList.toggle('disabled', currentScale === 'foundation');
+  var ft = document.getElementById('fontToggle');
+  var noFonts = currentScale === 'foundation' || currentScale === 'merchant';
+  el.classList.toggle('disabled', noFonts);
+  ft.classList.toggle('disabled', currentScale === 'merchant');
   var sliderVisible = currentScale === 'merchant' || currentScale === 'courier';
   document.getElementById('merchantSlider').classList.toggle('visible', sliderVisible);
   if (sliderVisible) {
