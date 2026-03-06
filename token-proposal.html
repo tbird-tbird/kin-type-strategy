@@ -131,7 +131,7 @@
   </tr>
   <tr>
     <td><strong>font-weight</strong></td><td>5 tokens</td><td>6 tokens</td><td style="color:#16a34a">+1</td>
-    <td>Added <code>regular</code> (400) to maintain consistent scale</td>
+    <td>Switched existing values from strings to numeric; added <code>regular</code> (400)</td>
   </tr>
   <tr>
     <td><strong>font-size</strong></td><td>28 tokens</td><td>17 tokens</td><td style="color:#dc2626">&minus;11</td>
@@ -193,35 +193,53 @@
 
 <!-- ==================== FONT WEIGHT ==================== -->
 <h2>base/font-weight</h2>
-<p>Added <code>regular</code> (400) to fill the gap between <code>light</code> (300) and <code>medium</code> (500), maintaining a complete and consistent weight scale. Values are stored as numeric CSS font-weight values for cross-platform consistency.</p>
+<p>All existing font-weight token values switch from strings (e.g., <code>"Light"</code>) to numeric values (e.g., <code>300</code>) for cross-platform consistency. <code>regular</code> (400) is also added to fill the gap between <code>light</code> and <code>medium</code>, completing the weight scale.</p>
 
 <div class="note"><strong>Why numeric values?</strong> The same numeric weight (e.g., 800) may be labelled differently across fonts &mdash; "Extra Bold" in Inter, "Heavy" in SF Pro. Numeric values are unambiguous and align with the <a href="https://www.designtokens.org/tr/2025.10/format/#font-weight" style="color: inherit;">W3C Design Tokens spec</a>, which treats strings as aliases for numeric weights.</div>
 
 <table>
-  <tr><th>Token</th><th>Value</th><th>Description</th><th>Status</th></tr>
+  <tr><th>Token</th><th>Proposed value</th><th>Previous value</th><th>Description</th><th>Status</th></tr>
   <tr>
-    <td><code>base/font-weight/light</code></td><td>300</td><td></td>
-    <td><span class="tag tag-unchanged">Unchanged</span></td>
+    <td><code>base/font-weight/light</code></td>
+    <td class="val-new">300</td>
+    <td><span class="val-old">"Light"</span></td>
+    <td></td>
+    <td><span class="tag tag-modified">Modified</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/regular</code></td><td>400</td><td></td>
+    <td><code>base/font-weight/regular</code></td>
+    <td class="val-new">400</td>
+    <td>&mdash;</td>
+    <td></td>
     <td><span class="tag tag-added">Added</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/medium</code></td><td>500</td><td>The default font weight</td>
-    <td><span class="tag tag-unchanged">Unchanged</span></td>
+    <td><code>base/font-weight/medium</code></td>
+    <td class="val-new">500</td>
+    <td><span class="val-old">"Medium"</span></td>
+    <td>The default font weight</td>
+    <td><span class="tag tag-modified">Modified</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/semibold</code></td><td>600</td><td></td>
-    <td><span class="tag tag-unchanged">Unchanged</span></td>
+    <td><code>base/font-weight/semibold</code></td>
+    <td class="val-new">600</td>
+    <td><span class="val-old">"SemiBold"</span></td>
+    <td></td>
+    <td><span class="tag tag-modified">Modified</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/bold</code></td><td>700</td><td>Used for headings</td>
-    <td><span class="tag tag-unchanged">Unchanged</span></td>
+    <td><code>base/font-weight/bold</code></td>
+    <td class="val-new">700</td>
+    <td><span class="val-old">"Bold"</span></td>
+    <td>Used for headings</td>
+    <td><span class="tag tag-modified">Modified</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/extrabold</code></td><td>800</td><td></td>
-    <td><span class="tag tag-unchanged">Unchanged</span></td>
+    <td><code>base/font-weight/extrabold</code></td>
+    <td class="val-new">800</td>
+    <td><span class="val-old">"ExtraBold"</span></td>
+    <td></td>
+    <td><span class="tag tag-modified">Modified</span></td>
   </tr>
 </table>
 
