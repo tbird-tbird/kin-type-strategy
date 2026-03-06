@@ -216,7 +216,7 @@ function renderScale(name) {
     breaks = sectionBreaks[name];
   }
 
-  document.getElementById('scaleBanner').style.display = (name === 'courier' && bucket === 1) ? '' : 'none';
+  document.getElementById('scaleBanner').style.display = (name === 'courier' && bucket === 1) ? 'block' : 'none';
 
   var list = document.getElementById('scaleList');
   var infoEl = document.getElementById('scaleInfo');
