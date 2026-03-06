@@ -76,6 +76,13 @@
   [data-theme="dark"] .tag-unchanged { background: #1e1e1e; color: #888; }
   td:has(.tag) { text-align: right; }
   .change-row td { font-size: 13px; }
+  .exec-summary { border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 40px; }
+  .exec-summary .exec-lead { font-size: 16px; line-height: 1.6; margin-bottom: 24px; color: var(--text); }
+  .exec-pillars { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .exec-pillar { padding: 16px; background: #f9fafb; border-radius: 8px; }
+  [data-theme="dark"] .exec-pillar { background: #141414; }
+  .exec-pillar h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .exec-pillar p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
   .val-old { color: var(--muted); text-decoration: line-through; }
   .val-new { font-weight: 600; }
   .arrow { color: var(--muted); margin: 0 4px; }
@@ -110,6 +117,28 @@
 
 <h1>Prism Base Type Token Proposal</h1>
 <p class="subtitle">Proposed changes to the base type token architecture &middot; Source: Prism Base (<code>Mp8dBTFCjNZsLGrG4A5O9V</code>)</p>
+
+<div class="exec-summary">
+  <p class="exec-lead">Prism's base type tokens currently use opaque naming conventions, bundle multiple values under single tokens, and encode brand intent at the wrong layer of the system. This proposal restructures the base token architecture to make tokens self-documenting, brand-agnostic, and aligned with the W3C Design Token specification — without changing any visible design output. The total token count stays the same at 57, replacing 13 imprecise tokens with 13 clearer ones.</p>
+  <div class="exec-pillars">
+    <div class="exec-pillar">
+      <h4>Easier to read and use</h4>
+      <p>Token names now reflect their values directly. <code>base/font-size/18</code> is 18px. No more memorising lookup tables like <code>base/font-size/25</code> = 18px.</p>
+    </div>
+    <div class="exec-pillar">
+      <h4>Multi-brand ready</h4>
+      <p>Font family tokens are split into one token per typeface. Brand and platform decisions move to the semantic layer, where they belong — not baked into base tokens.</p>
+    </div>
+    <div class="exec-pillar">
+      <h4>Reduces errors</h4>
+      <p>Removing 10 unreferenced semantic aliases and opaque index-based names eliminates a whole class of token misuse where the name bears no relation to the value.</p>
+    </div>
+    <div class="exec-pillar">
+      <h4>Standards aligned</h4>
+      <p>Font weights switch from string labels to numeric values, consistent with the W3C Design Token spec and removing ambiguity across font families and platforms.</p>
+    </div>
+  </div>
+</div>
 
 <h2>Overview</h2>
 
