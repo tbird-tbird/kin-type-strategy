@@ -165,13 +165,17 @@
 var scales = {
   foundation: [72, 60, 48, 40, 32, 28, 24, 20, 18, 16, 14, 12],
   consumer: [40, 32, 24, 20, 16, 14, 12],
-  courier: [40, 28, 22, 18, 16],
   merchant: [],
+};
+
+var courierBuckets = {
+  1: { sizes: [32, 24, 20, 16, 14], breaks: { displayAbove: 16, bodyAtOrBelow: 16 } },
+  2: { sizes: [40, 28, 22, 18, 16], breaks: { displayAbove: 18, bodyAtOrBelow: 18 } }
 };
 
 var sectionBreaks = {
   consumer: { displayAbove: 16, bodyAtOrBelow: 16 },
-  courier:  { displayAbove: 18, bodyAtOrBelow: 18 }
+  courier:  { displayAbove: 16, bodyAtOrBelow: 16 }
 };
 
 var foundationSet = {};
@@ -191,11 +195,21 @@ var currentDisplayFont = 'ddnorms';
 var currentScale = 'foundation';
 
 function renderScale(name) {
-  var sizes = scales[name];
+  var sizes, breaks;
+  if (name === 'courier') {
+    var bucket = parseInt(document.getElementById('bucketSlider').value);
+    var bd = courierBuckets[bucket];
+    sizes = bd.sizes;
+    breaks = bd.breaks;
+  } else {
+    sizes = scales[name];
+    breaks = sectionBreaks[name];
+  }
+
   var list = document.getElementById('scaleList');
   var infoEl = document.getElementById('scaleInfo');
 
-  if (!sizes.length) {
+  if (!sizes || !sizes.length) {
     infoEl.style.display = 'none';
     list.innerHTML = '<li style="padding:48px 0;text-align:center;color:var(--muted);font-size:14px">Scale to be defined</li>';
     return;
@@ -205,7 +219,6 @@ function renderScale(name) {
   document.getElementById('scaleRange').textContent = sizes[sizes.length - 1] + 'px \u2013 ' + sizes[0] + 'px';
 
   list.innerHTML = '';
-  var breaks = sectionBreaks[name];
   var addedDisplay = false;
   var addedBody = false;
 
@@ -300,7 +313,10 @@ function positionBucketValue() {
 }
 
 function updateSlider() { alignSlider(); positionBucketValue(); }
-document.getElementById('bucketSlider').addEventListener('input', positionBucketValue);
+document.getElementById('bucketSlider').addEventListener('input', function() {
+  positionBucketValue();
+  renderScale(currentScale);
+});
 window.addEventListener('resize', updateSlider);
 setTimeout(updateSlider, 0);
 
