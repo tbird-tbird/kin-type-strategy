@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Token Proposal — Prism Base Type Tokens</title>
 <style>
@@ -74,15 +75,7 @@
   [data-theme="dark"] .tag-modified { background: #422006; color: #fde68a; }
   [data-theme="dark"] .tag-renamed { background: #1e3a5f; color: #93c5fd; }
   [data-theme="dark"] .tag-unchanged { background: #1e1e1e; color: #888; }
-  td:has(.tag) { text-align: right; white-space: nowrap; width: 1%; }
   .change-row td { font-size: 13px; }
-  .exec-summary { border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 40px; }
-  .exec-summary .exec-lead { font-size: 16px; line-height: 1.6; margin-bottom: 24px; color: var(--text); }
-  .exec-pillars { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-  .exec-pillar { padding: 16px; background: #f9fafb; border-radius: 8px; }
-  [data-theme="dark"] .exec-pillar { background: #141414; }
-  .exec-pillar h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-  .exec-pillar p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
   .val-old { color: var(--muted); text-decoration: line-through; }
   .val-new { font-weight: 600; }
   .arrow { color: var(--muted); margin: 0 4px; }
@@ -118,35 +111,13 @@
 <h1>Prism Base Type Token Proposal</h1>
 <p class="subtitle">Proposed changes to the base type token architecture &middot; Source: Prism Base (<code>Mp8dBTFCjNZsLGrG4A5O9V</code>)</p>
 
-<div class="exec-summary">
-  <p class="exec-lead">Prism's base type tokens currently use opaque naming conventions, bundle multiple values under single tokens, and encode brand intent at the wrong layer of the system. This proposal restructures the base token architecture to make tokens self-documenting, brand-agnostic, and aligned with the W3C Design Token specification — without changing any visible design output. The total token count stays the same at 57, replacing 13 imprecise tokens with 13 clearer ones.</p>
-  <div class="exec-pillars">
-    <div class="exec-pillar">
-      <h4>Easier to read and use</h4>
-      <p>Token names now reflect their values directly. <code>base/font-size/18</code> is 18px. No more memorising lookup tables like <code>base/font-size/25</code> = 18px.</p>
-    </div>
-    <div class="exec-pillar">
-      <h4>Multi-brand ready</h4>
-      <p>Font family tokens are split into one token per typeface. Brand and platform decisions move to the semantic layer, where they belong — not baked into base tokens.</p>
-    </div>
-    <div class="exec-pillar">
-      <h4>Reduces errors</h4>
-      <p>Removing 10 unreferenced semantic aliases and opaque index-based names eliminates a whole class of token misuse where the name bears no relation to the value.</p>
-    </div>
-    <div class="exec-pillar">
-      <h4>Standards aligned</h4>
-      <p>Font weights switch from string labels to numeric values, consistent with the W3C Design Token spec and removing ambiguity across font families and platforms.</p>
-    </div>
-  </div>
-</div>
-
 <h2>Overview</h2>
 
 <div class="stat-grid">
   <div class="stat-card"><div class="value">57</div><div class="label">Current Tokens</div></div>
-  <div class="stat-card"><div class="value">57</div><div class="label">Proposed Tokens</div></div>
-  <div class="stat-card green"><div class="value">+13</div><div class="label">Tokens Added</div></div>
-  <div class="stat-card red"><div class="value">&minus;13</div><div class="label">Tokens Removed</div></div>
+  <div class="stat-card"><div class="value">54</div><div class="label">Proposed Tokens</div></div>
+  <div class="stat-card green"><div class="value">+8</div><div class="label">Tokens Added</div></div>
+  <div class="stat-card red"><div class="value">&minus;11</div><div class="label">Tokens Removed</div></div>
 </div>
 
 <div class="note-blue"><strong>Key architectural change:</strong> Font-size and line-height tokens switch from an index-based naming system (e.g., <code>base/font-size/25</code> = 18px) to a value-based system (e.g., <code>base/font-size/18</code> = 18). This makes token names more intuitive, reduces the chance of errors, and ensures abstraction happens at the usage layer rather than the base layer.</div>
@@ -156,12 +127,12 @@
 <table>
   <tr><th>Property</th><th>Current</th><th>Proposed</th><th>Net change</th><th>Key changes</th></tr>
   <tr>
-    <td><strong>font-family</strong></td><td>2 tokens</td><td>6 tokens</td><td style="color:#16a34a">+4</td>
-    <td>Replaced <code>default</code> and <code>brand</code> with per-font tokens (<code>sf-pro</code>, <code>inter</code>, <code>dd-norms</code>, <code>omnes</code>, <code>stratos</code>); added <code>mono</code></td>
+    <td><strong>font-family</strong></td><td>2 tokens</td><td>3 tokens</td><td style="color:#16a34a">+1</td>
+    <td>Added <code>mono</code> for monospaced fonts</td>
   </tr>
   <tr>
     <td><strong>font-weight</strong></td><td>5 tokens</td><td>6 tokens</td><td style="color:#16a34a">+1</td>
-    <td>Switched existing values from strings to numeric; added <code>regular</code> (400)</td>
+    <td>Added <code>regular</code> (400) to maintain consistent scale</td>
   </tr>
   <tr>
     <td><strong>font-size</strong></td><td>28 tokens</td><td>17 tokens</td><td style="color:#dc2626">&minus;11</td>
@@ -179,51 +150,21 @@
 
 <!-- ==================== FONT FAMILY ==================== -->
 <h2>base/font-family</h2>
-<p>Both existing tokens (<code>default</code> and <code>brand</code>) are replaced with individual per-font tokens, one for each typeface. This ensures no theming or brand intent exists at the base layer — every token is a pure named constant. Usage/semantic tokens (e.g., <code>font-family/body</code>, <code>font-family/display</code>) are then responsible for referencing the appropriate base font per brand and platform. A monospaced font-family token is also added to support code and tabular content.</p>
+<p>Added a monospaced font-family token to support code and tabular content. Current tokens are unchanged.</p>
 
 <table>
-  <tr><th>Token</th><th>Value</th><th>Description</th><th style="white-space:nowrap;width:1%">Status</th></tr>
+  <tr><th>Token</th><th>Value</th><th>Description</th><th>Status</th></tr>
   <tr>
     <td><code>base/font-family/default</code></td>
     <td>System (SF Pro / Inter)</td>
-    <td>—</td>
-    <td><span class="tag tag-removed">Removed</span></td>
+    <td>Default fonts for consistent, performance-optimised typographic foundation</td>
+    <td><span class="tag tag-unchanged">Unchanged</span></td>
   </tr>
   <tr>
     <td><code>base/font-family/brand</code></td>
     <td>DD Norms / Omnes / Stratos</td>
-    <td>—</td>
-    <td><span class="tag tag-removed">Removed</span></td>
-  </tr>
-  <tr>
-    <td><code>base/font-family/sf-pro</code></td>
-    <td>SF Pro</td>
-    <td>Apple system typeface; default for iOS and macOS surfaces</td>
-    <td><span class="tag tag-added">Added</span></td>
-  </tr>
-  <tr>
-    <td><code>base/font-family/inter</code></td>
-    <td>Inter</td>
-    <td>Default typeface for web and Android surfaces</td>
-    <td><span class="tag tag-added">Added</span></td>
-  </tr>
-  <tr>
-    <td><code>base/font-family/dd-norms</code></td>
-    <td>DD Norms</td>
-    <td>DoorDash brand typeface</td>
-    <td><span class="tag tag-added">Added</span></td>
-  </tr>
-  <tr>
-    <td><code>base/font-family/omnes</code></td>
-    <td>Omnes</td>
-    <td>Wolt brand typeface</td>
-    <td><span class="tag tag-added">Added</span></td>
-  </tr>
-  <tr>
-    <td><code>base/font-family/stratos</code></td>
-    <td>Stratos</td>
-    <td>Deliveroo brand typeface</td>
-    <td><span class="tag tag-added">Added</span></td>
+    <td>Brand fonts used when there is a need to express a brand</td>
+    <td><span class="tag tag-unchanged">Unchanged</span></td>
   </tr>
   <tr>
     <td><code>base/font-family/mono</code></td>
@@ -235,53 +176,35 @@
 
 <!-- ==================== FONT WEIGHT ==================== -->
 <h2>base/font-weight</h2>
-<p>All existing font-weight token values switch from strings (e.g., <code>"Light"</code>) to numeric values (e.g., <code>300</code>) for cross-platform consistency. <code>regular</code> (400) is also added to fill the gap between <code>light</code> and <code>medium</code>, completing the weight scale.</p>
+<p>Added <code>regular</code> (400) to fill the gap between <code>light</code> (300) and <code>medium</code> (500), maintaining a complete and consistent weight scale. Values are stored as numeric CSS font-weight values for cross-platform consistency.</p>
 
 <div class="note"><strong>Why numeric values?</strong> The same numeric weight (e.g., 800) may be labelled differently across fonts &mdash; "Extra Bold" in Inter, "Heavy" in SF Pro. Numeric values are unambiguous and align with the <a href="https://www.designtokens.org/tr/2025.10/format/#font-weight" style="color: inherit;">W3C Design Tokens spec</a>, which treats strings as aliases for numeric weights.</div>
 
 <table>
-  <tr><th>Token</th><th>Proposed value</th><th>Previous value</th><th>Description</th><th style="white-space:nowrap;width:1%">Status</th></tr>
+  <tr><th>Token</th><th>Value</th><th>Description</th><th>Status</th></tr>
   <tr>
-    <td><code>base/font-weight/light</code></td>
-    <td class="val-new">300</td>
-    <td><span class="val-old">"Light"</span></td>
-    <td></td>
-    <td><span class="tag tag-modified">Modified</span></td>
+    <td><code>base/font-weight/light</code></td><td>300</td><td></td>
+    <td><span class="tag tag-unchanged">Unchanged</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/regular</code></td>
-    <td class="val-new">400</td>
-    <td>&mdash;</td>
-    <td></td>
+    <td><code>base/font-weight/regular</code></td><td>400</td><td></td>
     <td><span class="tag tag-added">Added</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/medium</code></td>
-    <td class="val-new">500</td>
-    <td><span class="val-old">"Medium"</span></td>
-    <td>The default font weight</td>
-    <td><span class="tag tag-modified">Modified</span></td>
+    <td><code>base/font-weight/medium</code></td><td>500</td><td>The default font weight</td>
+    <td><span class="tag tag-unchanged">Unchanged</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/semibold</code></td>
-    <td class="val-new">600</td>
-    <td><span class="val-old">"SemiBold"</span></td>
-    <td></td>
-    <td><span class="tag tag-modified">Modified</span></td>
+    <td><code>base/font-weight/semibold</code></td><td>600</td><td></td>
+    <td><span class="tag tag-unchanged">Unchanged</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/bold</code></td>
-    <td class="val-new">700</td>
-    <td><span class="val-old">"Bold"</span></td>
-    <td>Used for headings</td>
-    <td><span class="tag tag-modified">Modified</span></td>
+    <td><code>base/font-weight/bold</code></td><td>700</td><td>Used for headings</td>
+    <td><span class="tag tag-unchanged">Unchanged</span></td>
   </tr>
   <tr>
-    <td><code>base/font-weight/extrabold</code></td>
-    <td class="val-new">800</td>
-    <td><span class="val-old">"ExtraBold"</span></td>
-    <td></td>
-    <td><span class="tag tag-modified">Modified</span></td>
+    <td><code>base/font-weight/extrabold</code></td><td>800</td><td></td>
+    <td><span class="tag tag-unchanged">Unchanged</span></td>
   </tr>
 </table>
 
@@ -293,7 +216,7 @@
 
 <h3>Proposed scale (17 tokens)</h3>
 <table>
-  <tr><th>Proposed token</th><th>Value (px)</th><th>Previous token</th><th style="white-space:nowrap;width:1%">Status</th></tr>
+  <tr><th>Proposed token</th><th>Value (px)</th><th>Previous token</th><th>Status</th></tr>
   <tr><td><code>base/font-size/10</code></td><td>10</td><td><code>base/font-size/5</code></td><td><span class="tag tag-renamed">Renamed</span></td></tr>
   <tr><td><code>base/font-size/12</code></td><td>12</td><td><code>base/font-size/10</code></td><td><span class="tag tag-renamed">Renamed</span></td></tr>
   <tr><td><code>base/font-size/14</code></td><td>14</td><td><code>base/font-size/15</code></td><td><span class="tag tag-renamed">Renamed</span></td></tr>
@@ -315,18 +238,18 @@
 
 <h3>Removed tokens (11 tokens)</h3>
 <table>
-  <tr><th>Removed token</th><th>Value</th><th>Reason</th><th style="white-space:nowrap;width:1%">Status</th></tr>
-  <tr><td><code>base/font-size/190</code></td><td>84px</td><td>Only referenced by 1 mode (Merchant POS Plus); oversized for current needs</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/xx-small</code></td><td>&rarr; step 5</td><td rowspan="10" style="vertical-align:middle">Semantic aliases with zero references across all 32 modes. Usage tokens reference numeric steps directly, making this layer redundant.</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/x-small</code></td><td>&rarr; step 10</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/small</code></td><td>&rarr; step 15</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/medium</code></td><td>&rarr; step 20</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/large</code></td><td>&rarr; step 25</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/x-large</code></td><td>&rarr; step 30</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/xx-large</code></td><td>&rarr; step 40</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/xxx-large</code></td><td>&rarr; step 60</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/xxxx-large</code></td><td>&rarr; step 80</td><td><span class="tag tag-removed">Removed</span></td></tr>
-  <tr><td><code>base/font-size/xxxxx-large</code></td><td>&rarr; step 90</td><td><span class="tag tag-removed">Removed</span></td></tr>
+  <tr><th>Removed token</th><th>Value</th><th>Reason</th></tr>
+  <tr><td><code>base/font-size/190</code></td><td>84px</td><td>Only referenced by 1 mode (Merchant POS Plus); oversized for current needs</td></tr>
+  <tr><td><code>base/font-size/xx-small</code></td><td>&rarr; step 5</td><td rowspan="10" style="vertical-align:middle">Semantic aliases with zero references across all 32 modes. Usage tokens reference numeric steps directly, making this layer redundant.</td></tr>
+  <tr><td><code>base/font-size/x-small</code></td><td>&rarr; step 10</td></tr>
+  <tr><td><code>base/font-size/small</code></td><td>&rarr; step 15</td></tr>
+  <tr><td><code>base/font-size/medium</code></td><td>&rarr; step 20</td></tr>
+  <tr><td><code>base/font-size/large</code></td><td>&rarr; step 25</td></tr>
+  <tr><td><code>base/font-size/x-large</code></td><td>&rarr; step 30</td></tr>
+  <tr><td><code>base/font-size/xx-large</code></td><td>&rarr; step 40</td></tr>
+  <tr><td><code>base/font-size/xxx-large</code></td><td>&rarr; step 60</td></tr>
+  <tr><td><code>base/font-size/xxxx-large</code></td><td>&rarr; step 80</td></tr>
+  <tr><td><code>base/font-size/xxxxx-large</code></td><td>&rarr; step 90</td></tr>
 </table>
 
 <!-- ==================== LETTER SPACING ==================== -->
@@ -334,7 +257,7 @@
 <p>The letter-spacing scale has been revised for better distribution. Key changes: added a <code>&minus;0.1</code> value between <code>&minus;0.2</code> and <code>0</code>, changed <code>&minus;0.5</code> to <code>&minus;0.6</code> for more even spacing, and changed <code>&minus;0.01</code> to <code>0</code> (effectively no letter-spacing). Letter-spacing retains index-based naming as the values are not intuitive enough to serve as names.</p>
 
 <table>
-  <tr><th>Token</th><th>Proposed value</th><th>Previous value</th><th style="white-space:nowrap;width:1%">Status</th></tr>
+  <tr><th>Token</th><th>Proposed value</th><th>Previous value</th><th>Status</th></tr>
   <tr>
     <td><code>base/letter-spacing/0</code></td><td>&minus;2</td><td>&minus;2</td>
     <td><span class="tag tag-unchanged">Unchanged</span></td>
@@ -395,7 +318,7 @@
 
 <h3>Proposed scale (19 tokens)</h3>
 <table>
-  <tr><th>Proposed token</th><th>Value (px)</th><th>Previous token</th><th style="white-space:nowrap;width:1%">Status</th></tr>
+  <tr><th>Proposed token</th><th>Value (px)</th><th>Previous token</th><th>Status</th></tr>
   <tr><td><code>base/line-height/16</code></td><td>16</td><td><code>base/line-height/0</code></td><td><span class="tag tag-renamed">Renamed</span></td></tr>
   <tr><td><code>base/line-height/18</code></td><td>18</td><td><code>base/line-height/5</code></td><td><span class="tag tag-renamed">Renamed</span></td></tr>
   <tr><td><code>base/line-height/20</code></td><td>20</td><td><code>base/line-height/10</code></td><td><span class="tag tag-renamed">Renamed</span></td></tr>
