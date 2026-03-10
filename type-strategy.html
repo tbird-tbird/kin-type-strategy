@@ -12,12 +12,15 @@
   [data-theme="dark"] .nav-dropdown-menu a:hover { background: #222; }
   [data-theme="dark"] .phase-badge { background: #1e3a5f; color: #93c5fd; }
   [data-theme="dark"] .problem-card { background: #141414; border-color: #2a2a2a; }
+  [data-theme="dark"] .issue-card { background: #141414; border-color: #2a2a2a; }
   [data-theme="dark"] .goal-card { background: #141414; border-color: #2a2a2a; }
+  [data-theme="dark"] .goal-statement { background: #141414; border-color: #2a2a2a; }
+  [data-theme="dark"] .goal-list { background: #141414; border-color: #2a2a2a; }
   [data-theme="dark"] .goal-item { border-bottom-color: #1e1e1e; }
   [data-theme="dark"] .icon-x { background: #450a0a; color: #f87171; }
   [data-theme="dark"] .icon-check { background: #052e16; color: #86efac; }
   [data-theme="dark"] .program-card { background: #0c1524; border-color: #1e3a5f; }
-  [data-theme="dark"] .phase-row { border-bottom-color: #1e1e1e; }
+  [data-theme="dark"] .phase-row { border-bottom-color: rgba(255,255,255,0.1); }
   [data-theme="dark"] .phase-status.complete { background: #052e16; color: #86efac; }
   [data-theme="dark"] .phase-status.active { background: #1e3a5f; color: #93c5fd; }
   [data-theme="dark"] .phase-status.planned { background: #1e1e1e; color: #888; }
@@ -31,7 +34,7 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
 
   nav.top-nav { border-bottom: 1px solid var(--border); margin-bottom: 40px; padding: 14px 0; display: flex; align-items: baseline; gap: 24px; font-size: 13px; position: relative; }
   nav.top-nav a { color: var(--muted); text-decoration: none; font-weight: 500; }
@@ -49,23 +52,23 @@
   .nav-dropdown-menu a:hover { background: #f9fafb; }
 
   h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-  h2 { font-size: 20px; font-weight: 600; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h2 { font-size: 20px; font-weight: 600; margin: 64px 0 28px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
   .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
 
   /* Phase badge */
-  .page-header { margin-bottom: 32px; }
+  .page-header { margin-bottom: 48px; }
   .phase-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 4px; margin-bottom: 12px; }
 
   /* Summary */
   .summary-text { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 760px; margin-bottom: 0; }
 
   /* Program context card */
-  .program-card { border: 1px solid #bfdbfe; background: #eff6ff; border-radius: 10px; padding: 20px 24px; margin-bottom: 40px; }
+  .program-card { border: 1px solid #bfdbfe; background: #eff6ff; border-radius: 24px; padding: 28px 32px; margin-bottom: 0; }
   .program-card .program-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #1e40af; margin-bottom: 12px; }
   .program-card .program-headline { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
   .program-card .program-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
   .phase-table { width: 100%; border-collapse: collapse; }
-  .phase-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #bfdbfe; font-size: 13px; }
+  .phase-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #bfdbfe; font-size: 13px; }
   .phase-row:last-child { border-bottom: none; }
   .phase-name { font-weight: 500; flex: 1; }
   .phase-detail { color: var(--muted); flex: 2; }
@@ -75,8 +78,8 @@
   .phase-status.planned { background: #f3f4f6; color: #6b7280; }
 
   /* Issues */
-  .issues-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
-  .issue-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; background: var(--bg); }
+  .issues-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 860px; padding: 28px 0 8px; margin: 0 auto; }
+  .issue-card { border: 1px solid var(--border); border-radius: 24px; padding: 16px 18px; background: #f9fafb; }
   .issue-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-bottom: 10px; }
   .icon-x { background: #fef2f2; color: #dc2626; }
   .icon-check { background: #f0fdf4; color: #16a34a; }
@@ -84,20 +87,20 @@
   .issue-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
   /* Goals */
-  .goal-statement { font-size: 14px; color: var(--text); line-height: 1.7; padding: 16px 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); margin-bottom: 16px; }
-  .goal-list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .goal-item { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .goal-statement { font-size: 14px; color: var(--text); line-height: 1.7; padding: 20px 24px; border: 1px solid var(--border); border-radius: 24px; background: #f9fafb; margin-bottom: 24px; }
+  .goal-list { border: 1px solid var(--border); border-radius: 24px; overflow: hidden; background: #f9fafb; }
+  .goal-item { display: flex; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); align-items: flex-start; }
   .goal-item:last-child { border-bottom: none; }
   .goal-item .icon-check { margin-top: 1px; flex-shrink: 0; }
   .goal-item .goal-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
   .goal-item .goal-text strong { display: block; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 2px; }
 
   /* Token architecture connection */
-  .connect-card { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .connect-header { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .connect-card { border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+  .connect-header { padding: 18px 22px; border-bottom: 1px solid var(--border); }
   .connect-header .connect-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; }
   .connect-header .connect-title { font-size: 14px; font-weight: 600; }
-  .connect-item { display: flex; gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .connect-item { display: flex; gap: 14px; padding: 16px 22px; border-bottom: 1px solid var(--border); align-items: flex-start; }
   .connect-item:last-child { border-bottom: none; }
   .connect-goal { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; min-width: 160px; padding-top: 2px; flex-shrink: 0; }
   .connect-action { font-size: 13px; color: var(--muted); line-height: 1.5; }

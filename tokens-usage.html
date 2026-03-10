@@ -19,6 +19,12 @@
   [data-theme="dark"] .tier-1 { background: #1c0606; }
   [data-theme="dark"] .tier-2 { background: #191400; }
   [data-theme="dark"] .stat-card { background: #141414; border-color: var(--border); }
+  .stat-card.highlight { background: #dbeafe; border-color: #93c3fd; }
+  .stat-card.highlight .value { color: #1d4ed8; }
+  .stat-card.highlight .label { color: #3b82f6; }
+  [data-theme="dark"] .stat-card.highlight { background: #1e3a5f; border-color: #2563eb; }
+  [data-theme="dark"] .stat-card.highlight .value { color: #93c5fd; }
+  [data-theme="dark"] .stat-card.highlight .label { color: #60a5fa; }
   [data-theme="dark"] .scale-toggle button { background: transparent; }
   [data-theme="dark"] .scale-toggle button.active { background: #e5e5e5; color: #0f0f0f; }
   [data-theme="dark"] .scale-toggle button:hover { background: #1a1a1a; }
@@ -32,7 +38,7 @@
   .theme-toggle svg { width: 18px; height: 18px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
   nav.top-nav { border-bottom: 1px solid var(--border); margin-bottom: 40px; padding: 14px 0; display: flex; align-items: baseline; gap: 24px; font-size: 13px; position: relative; }
   nav.top-nav a { color: var(--muted); text-decoration: none; font-weight: 500; }
   nav.top-nav a:hover { color: var(--text); }
@@ -48,8 +54,8 @@
   .nav-dropdown-menu a { display: block; padding: 8px 16px; color: var(--text); font-size: 14px; font-weight: 400; }
   .nav-dropdown-menu a:hover { background: #f9fafb; }
   h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-  .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
-  h2 { font-size: 20px; font-weight: 600; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 48px; }
+  h2 { font-size: 20px; font-weight: 600; margin: 64px 0 28px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
   h3 { font-size: 16px; font-weight: 600; margin: 24px 0 12px; }
   p { margin-bottom: 12px; }
   table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px; }
@@ -58,9 +64,12 @@
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: #fafbfc; }
   code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
-  .note { padding: 12px 16px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0; font-size: 13px; margin: 16px 0; }
-  .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .stat-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .note code, .tier-1 code, .tier-2 code { background: rgba(245, 158, 11, 0.15); color: #92400e; border: 1px solid rgba(245, 158, 11, 0.3); }
+  [data-theme="dark"] .note code, [data-theme="dark"] .tier-1 code, [data-theme="dark"] .tier-2 code { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border-color: rgba(245, 158, 11, 0.25); }
+  .note { padding: 12px 16px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 8px; font-size: 13px; margin: 16px 0; }
+  .stat-grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 120px; gap: 16px; padding: 28px 0 8px; margin: 0 auto 32px; }
+  .stat-card { border: 1px solid var(--border); border-radius: 24px; padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .stat-card.highlight { grid-column: 1 / span 2; grid-row: 1 / span 2; }
   .stat-card .value { font-size: 28px; font-weight: 700; color: var(--accent); }
   .stat-card .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
   .mode-tag { display: inline-block; font-size: 11px; background: #f3f4f6; color: var(--muted); padding: 1px 6px; border-radius: 3px; margin: 1px 2px; }
@@ -108,7 +117,7 @@
 
 <h2>Summary</h2>
 <div class="stat-grid">
-  <div class="stat-card"><div class="value">178</div><div class="label">Total Usage Tokens</div></div>
+  <div class="stat-card highlight"><div class="value">178</div><div class="label">Total Usage Tokens</div></div>
   <div class="stat-card"><div class="value">24</div><div class="label">Semantic Primitives</div></div>
   <div class="stat-card"><div class="value">22</div><div class="label">Composite Variants</div></div>
   <div class="stat-card"><div class="value">154</div><div class="label">Composite Properties</div></div>
