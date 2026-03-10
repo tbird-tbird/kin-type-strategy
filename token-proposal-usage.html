@@ -100,6 +100,8 @@
   .info-card .rules-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 8px; }
   .info-card ol { margin: 0 0 0 18px; }
   .info-card ol li { font-size: 13px; color: var(--muted); margin-bottom: 6px; line-height: 1.5; }
+  .note-blue { padding: 12px 16px; background: #eff6ff; border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; font-size: 13px; margin: 0 0 32px; line-height: 1.6; color: var(--text); }
+  [data-theme="dark"] .note-blue { background: #0c1524; border-left-color: #2563eb; }
 </style>
 <script>(function(){var t=localStorage.getItem("prism-theme")||"light";document.documentElement.setAttribute("data-theme",t)})()</script>
 </head>
@@ -137,7 +139,9 @@
 </nav>
 
 <h1>Prism Type Token Architecture Proposal</h1>
-<p class="subtitle">Evolving from a 3-layer system to a 5-layer architecture by introducing a dedicated Base Brand primitive for typefaces and a Type Style composite layer between Usage and Component.</p>
+<p class="subtitle">Evolving from a 3-layer system to a 5-layer architecture by introducing a dedicated Base Brand primitive for typefaces and a Composite layer for Type Styles between Usage and Component.</p>
+
+<div class="note-blue"><strong>Note on the Composite layer:</strong> Composite Type tokens (Type Styles) already exist within the Usage layer today, sitting alongside primitive usage tokens. This proposal pulls them out into their own dedicated Composite layer — keeping things tidy and mirroring the same structural pattern being proposed for color tokens.</div>
 
 <h2>Architecture comparison</h2>
 <div class="proposal-grid">
@@ -172,12 +176,13 @@
           <span class="layer-name">Usage</span>
           <span class="layer-badge badge-public">Public</span>
         </div>
-        <div class="layer-desc">Semantic type tokens. The only layer designers and engineers can access. Also holds font-family values that have no clear structural home.</div>
+        <div class="layer-desc">Semantic type tokens and composite type styles mixed together. The only layer designers and engineers can access. Also holds font-family values that have no clear structural home.</div>
         <div class="layer-chips">
           <span class="chip">Font Size</span>
           <span class="chip">Line Height</span>
           <span class="chip">Letter Spacing</span>
           <span class="chip">Font Weight</span>
+          <span class="chip flagged">Type Styles</span>
           <span class="chip flagged">Font Family</span>
         </div>
       </div>
@@ -232,10 +237,10 @@
 
       <div class="layer-box new">
         <div class="layer-header">
-          <span class="layer-name">Type Style</span>
+          <span class="layer-name">Composite (Type Styles)</span>
           <span class="layer-badge badge-new">New &middot; Public</span>
         </div>
-        <div class="layer-desc">Bundles font-size, line-height, letter-spacing, and font-weight into reusable typography styles — defined once, referenced across all components.</div>
+        <div class="layer-desc">Composite Type tokens already live in Usage today. Pulling them into their own layer keeps primitive and composite tokens cleanly separated, and mirrors the Composite layer being introduced in the color token proposal.</div>
         <div class="layer-chips">
           <span class="chip">Display</span>
           <span class="chip">Heading</span>
