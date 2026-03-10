@@ -162,10 +162,10 @@
         <div class="layer-desc">Component-specific typography bindings consumed by UI. References Usage tokens directly.</div>
         <div class="layer-chips">
           <span class="chip">Button</span>
-          <span class="chip">Body</span>
-          <span class="chip">Label</span>
-          <span class="chip">Caption</span>
-          <span class="chip">Display</span>
+          <span class="chip">Tag</span>
+          <span class="chip">Banner</span>
+          <span class="chip">Empty State</span>
+          <span class="chip">Table</span>
         </div>
       </div>
 
@@ -226,10 +226,10 @@
         <div class="layer-desc">Component-specific typography bindings. References Type Style or Usage tokens.</div>
         <div class="layer-chips">
           <span class="chip">Button</span>
-          <span class="chip">Body</span>
-          <span class="chip">Label</span>
-          <span class="chip">Caption</span>
-          <span class="chip">Display</span>
+          <span class="chip">Tag</span>
+          <span class="chip">Banner</span>
+          <span class="chip">Empty State</span>
+          <span class="chip">Table</span>
         </div>
       </div>
 
@@ -243,10 +243,10 @@
         <div class="layer-desc">Composite Type tokens already live in Usage today. Pulling them into their own layer keeps primitive and composite tokens cleanly separated, and mirrors the Composite layer being introduced in the color token proposal.</div>
         <div class="layer-chips">
           <span class="chip">Display</span>
-          <span class="chip">Heading</span>
+          <span class="chip">Title</span>
           <span class="chip">Body</span>
           <span class="chip">Label</span>
-          <span class="chip">Caption</span>
+          <span class="chip">Link</span>
         </div>
       </div>
 
@@ -327,8 +327,8 @@
     <div class="issue-item">
       <div class="issue-icon icon-x">✕</div>
       <div class="issue-text">
-        <strong>No composite typography layer.</strong>
-        <span>Component tokens independently bundle font-size, line-height, letter-spacing, and font-weight — duplicating the same combinations across dozens of comp tokens with no shared definition.</span>
+        <strong>Composite type tokens are mixed into Usage.</strong>
+        <span>Type Style tokens (usage/type/*) already exist — display, title, body, label, link — but they live alongside primitive usage tokens in the same layer, with no structural separation from scalar values like font-size and line-height.</span>
       </div>
     </div>
 
@@ -380,8 +380,8 @@
     <div class="issue-item">
       <div class="issue-icon icon-check">✓</div>
       <div class="issue-text">
-        <strong>Type Style layer eliminates duplication.</strong>
-        <span>Define a typography combination once at the Type Style layer. Component tokens reference it — changes propagate automatically across the system.</span>
+        <strong>Type Style layer reorganizes existing composites.</strong>
+        <span>The usage/type/* tokens already exist — this proposal moves them into their own dedicated layer, cleanly separating composite type styles from primitive usage tokens and giving them a clear structural home.</span>
       </div>
     </div>
 
@@ -418,7 +418,7 @@
   <div class="info-card">
     <h3>What is a Type Style token?</h3>
     <p class="card-body">A composite token that bundles font-size, line-height, letter-spacing, and font-weight into a single reusable typography definition.</p>
-    <p class="card-example"><em>i.e. Display/Large, Heading/Medium, Body/Default, Label/Small</em></p>
+    <p class="card-example"><em>i.e. type/display/large, type/title/medium, type/body/default, type/label/small/strong</em></p>
     <div class="rules-label">Rules</div>
     <ol>
       <li>Type Style tokens are public and can be referenced by designers and engineers</li>
